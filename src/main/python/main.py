@@ -20,30 +20,15 @@ from PyQt5.QtGui import QDoubleValidator, QIntValidator, QTextCursor
 from PyQt5 import QtCore
 from pingplotter.PingPlotter import PingPlotter
 from pingplotter.PingOptions import PingOptions
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, pyqtSlot, pyqtSignal
+import threading
 
 
 class EmittingStream(QtCore.QObject):  
-        textWritten = QtCore.pyqtSignal(str)  #定义一个发送str的信号
+        _msg_signal = QtCore.pyqtSignal(str)  #定义一个发送str的信号
+
         def write(self, text):
-            self.textWritten.emit(str(text))  
-
-
-class SendWorker(QtCore.QObject):
-
-    def __init__(self, parent=None):
-
-        super(SendWorker, self).__init__(parent)
-        self.pingplotter = PingPlotter()
-
-    def work(self):
-        
-        opt = PingOptions()
-        opt.host = 'www.stanford.edu'
-        opt.packet_size = 2052
-        opt.ping_times = 5
-
-        self.pingplotter.ping(opt)
+            self._msg_signal.emit(str(text))  
 
 
 class PingPlotterGUI(QWidget):
@@ -98,19 +83,27 @@ class PingPlotterGUI(QWidget):
         self.ping_num_edit.setValidator(QIntValidator(self))
         self.ping_num_edit.setText('3')
         self.result_edit.setReadOnly(True)
-        sys.stdout = EmittingStream(textWritten=self.__output_written)
-        # sys.stderr = EmittingStream(textWritten=self.__output_written)  
+        sys.stdout = EmittingStream(_msg_signal=self.__output_written)
+        sys.stderr = EmittingStream(_msg_signal=self.__output_written)  
 
         self.send_button.clicked.connect(self.__send_patch)
 
     def __send_patch(self):
 
-        opt = PingOptions()
-        opt.host = self.host_edit.text()
-        opt.packet_size = int(self.patch_size_edit.text())
-        opt.ping_times = int(self.ping_num_edit.text())
+        def send_threading_func():
+            self.send_button.setEnabled(False)
 
-        self.pingplotter.ping(opt)
+            opt = PingOptions()
+            opt.host = self.host_edit.text()
+            opt.packet_size = int(self.patch_size_edit.text())
+            opt.ping_times = int(self.ping_num_edit.text())
+            
+            self.pingplotter.ping(opt)
+
+            self.send_button.setEnabled(True)
+
+        t = threading.Thread(target=send_threading_func, name='funciton', daemon=True)
+        t.start()
 
     def __output_written(self, text):  
         cursor = self.result_edit.textCursor()  
@@ -124,7 +117,7 @@ class PingPlotterGUI(QWidget):
         self.__draw_widget()
         self.__set_widget_attr()
         
-        self.setGeometry(300, 300, 500, 300)
+        self.setGeometry(200, 200, 800, 600)
         self.setWindowTitle('My PingPlotter')    
         self.show()
         

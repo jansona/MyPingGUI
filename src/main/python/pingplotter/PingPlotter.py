@@ -131,10 +131,12 @@ class PingPlotter(object):
             send_request_ping_time,rawsocket,addr = self.raw_socket(dst_addr, icmp_packet)
             times = self.reply_ping(send_request_ping_time, rawsocket, data_Sequence + i)
             if times > 0:
-                print("reply from {0} bytes = {1} time ={2}ms".format(addr, self.packet_size, int(times * 1000)))
+                print("{0}/{1}: reply from {2} bytes = {3} time ={4}ms" \
+                    .format(i+1, ping_times, addr, self.packet_size, int(times * 1000)))
                 time.sleep(0.7)
             else:
                 print("request time out")
+        print()
 
 
 if __name__ == "__main__":
