@@ -1,5 +1,5 @@
 {
-    "app_name": "firstproject",
+    "app_name": "my pingplotter",
     "author": "ybg",
     "main_module": "src/main/python/main.py",
     "version": "0.0.0"

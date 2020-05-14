@@ -14,6 +14,7 @@ last edited: January 2015
 """
 
 import sys
+from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5.QtWidgets import (QWidget, QLabel, QLineEdit, 
     QTextEdit, QGridLayout, QApplication, QPushButton, QVBoxLayout)
 from PyQt5.QtGui import QDoubleValidator, QIntValidator, QTextCursor
@@ -124,6 +125,7 @@ class PingPlotterGUI(QWidget):
         
 if __name__ == '__main__':
     
-    app = QApplication(sys.argv)
+    appctxt = ApplicationContext()
     ex = PingPlotterGUI()
-    sys.exit(app.exec_())
+    exit_code = appctxt.app.exec_() 
+    sys.exit(exit_code)
