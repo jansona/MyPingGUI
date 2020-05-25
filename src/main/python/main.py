@@ -2,27 +2,23 @@
 # -*- coding: utf-8 -*-
 
 """
-Py40 PyQt5 tutorial 
+MyPing GUI Version
 
-In this example, we create a bit
-more complicated window layout using
-the QGridLayout manager. 
-
-author: Jan Bodnar
-website: py40.com 
-last edited: January 2015
+author: ybg
+github: https://github.com/jansona/MyPing 
+last edited: May 2020
 """
 
 import sys
+import threading
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5.QtWidgets import (QWidget, QLabel, QLineEdit, 
     QTextEdit, QGridLayout, QApplication, QPushButton, QVBoxLayout)
 from PyQt5.QtGui import QDoubleValidator, QIntValidator, QTextCursor
 from PyQt5 import QtCore
-from pingplotter.PingPlotter import PingPlotter
-from pingplotter.PingOptions import PingOptions
 from PyQt5.QtCore import QThread, pyqtSlot, pyqtSignal
-import threading
+from MyPing.utils import PingUtil
+from MyPing.opts import PingOptions
 
 
 class EmittingStream(QtCore.QObject):  
@@ -32,12 +28,12 @@ class EmittingStream(QtCore.QObject):
             self._msg_signal.emit(str(text))  
 
 
-class PingPlotterGUI(QWidget):
+class MyPingGUI(QWidget):
     
     def __init__(self):
         super().__init__()
         
-        self.pingplotter = PingPlotter()
+        self.ping_util = PingUtil()
         self.initUI()
 
     def __draw_widget(self):
@@ -99,7 +95,7 @@ class PingPlotterGUI(QWidget):
             opt.packet_size = int(self.patch_size_edit.text())
             opt.ping_times = int(self.ping_num_edit.text())
             
-            self.pingplotter.ping(opt)
+            self.ping_util.ping(opt)
 
             self.send_button.setEnabled(True)
 
@@ -119,13 +115,13 @@ class PingPlotterGUI(QWidget):
         self.__set_widget_attr()
         
         self.setGeometry(200, 200, 800, 600)
-        self.setWindowTitle('My PingPlotter')    
+        self.setWindowTitle('My Ping')    
         self.show()
         
         
 if __name__ == '__main__':
     
     appctxt = ApplicationContext()
-    ex = PingPlotterGUI()
+    ex = MyPingGUI()
     exit_code = appctxt.app.exec_() 
     sys.exit(exit_code)
