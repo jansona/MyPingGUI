@@ -1,6 +1,6 @@
 # MyPingGUI
 
-![example](example.png)
+<img src="example.png" alt="example" style="zoom:50%;" />
 
 # Download
 
