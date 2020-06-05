@@ -39,7 +39,7 @@ class MyPingGUI(QWidget):
     def __draw_widget(self):
 
         host_label = QLabel('Host')
-        patch_size_label = QLabel('Patch size(bytes)')
+        patch_size_label = QLabel('Data size(bytes)')
         ping_num_label = QLabel('Ping times')
         # result_label = QLabel('Result')
 
@@ -83,9 +83,9 @@ class MyPingGUI(QWidget):
         sys.stdout = EmittingStream(_msg_signal=self.__output_written)
         sys.stderr = EmittingStream(_msg_signal=self.__output_written)  
 
-        self.send_button.clicked.connect(self.__send_patch)
+        self.send_button.clicked.connect(self.__send_packet)
 
-    def __send_patch(self):
+    def __send_packet(self):
 
         def send_threading_func():
             self.send_button.setEnabled(False)
